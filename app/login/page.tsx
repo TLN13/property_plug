@@ -4,17 +4,15 @@ import { useState } from "react";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
   sendPasswordResetEmail,
   AuthError,
 } from "firebase/auth";
 import { auth } from "@/app/firebase/firebase";
 import { useRouter } from "next/navigation";
+import { signInWithGoogle } from "@/app/firebase/auth";
+import { createUserIfNotExists, getUserRole } from "@/app/firebase/firestore";
 
 type Mode = "login" | "signup" | "reset";
-
-const googleProvider = new GoogleAuthProvider();
 
 function friendlyError(code: string): string {
   const map: Record<string, string> = {
@@ -52,6 +50,12 @@ export default function LoginPage() {
     clearMessages();
   };
 
+  const redirectBasedOnRole = async (uid: string) => {
+    const role = await getUserRole(uid);
+    if (role === "admin") router.push("/dashboard/admin");
+    else router.push("/dashboard/user");
+  };
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     clearMessages();
@@ -63,13 +67,19 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
+      let userCredential;
       if (mode === "login") {
-        await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // Create user in Firestore if it doesn't exist
+        await createUserIfNotExists(userCredential.user);
       }
-      router.push("/dashboard");
+
+      // ✅ Redirect based on role
+      await redirectBasedOnRole(userCredential.user.uid);
     } catch (err) {
+      console.error("Auth error:", err);
       setError(friendlyError((err as AuthError).code));
     } finally {
       setLoading(false);
@@ -80,9 +90,11 @@ export default function LoginPage() {
     clearMessages();
     setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
-      router.push("/dashboard");
+      const user = await signInWithGoogle();
+      await createUserIfNotExists(user); // Ensure Firestore document exists
+      await redirectBasedOnRole(user.uid);
     } catch (err) {
+      console.error("Firebase Google Sign-In Error:", err);
       setError(friendlyError((err as AuthError).code));
     } finally {
       setLoading(false);
@@ -101,6 +113,7 @@ export default function LoginPage() {
       await sendPasswordResetEmail(auth, email);
       setInfo("Reset link sent — check your inbox.");
     } catch (err) {
+      console.error("Password reset error:", err);
       setError(friendlyError((err as AuthError).code));
     } finally {
       setLoading(false);
@@ -186,9 +199,7 @@ export default function LoginPage() {
             className="flex flex-col gap-3"
           >
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">
-                Email
-              </label>
+              <label className="text-sm font-medium text-gray-700">Email</label>
               <input
                 type="email"
                 value={email}
@@ -202,9 +213,7 @@ export default function LoginPage() {
 
             {mode !== "reset" && (
               <div className="relative flex flex-col gap-1">
-                <label className="text-sm font-medium text-gray-700">
-                  Password
-                </label>
+                <label className="text-sm font-medium text-gray-700">Password</label>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
