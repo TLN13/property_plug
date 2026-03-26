@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import { auth } from "@/app/firebase/firebase";
 import { useRouter } from "next/navigation";
+import { getUserRole, createUserIfNotExists } from "@/app/firebase/firestore";
 
 type Mode = "login" | "signup" | "reset";
 
@@ -63,12 +64,18 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
+      let user;
       if (mode === "login") {
-        await signInWithEmailAndPassword(auth, email, password);
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        user = result.user;
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        user = result.user;
+        await createUserIfNotExists(user);
       }
-      router.push("/dashboard");
+      
+      const role = await getUserRole(user.uid);
+      router.push(role === "admin" ? "/dashboard/admin" : "/dashboard/user");
     } catch (err) {
       setError(friendlyError((err as AuthError).code));
     } finally {
@@ -80,8 +87,10 @@ export default function LoginPage() {
     clearMessages();
     setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
-      router.push("/dashboard");
+      const result = await signInWithPopup(auth, googleProvider);
+      await createUserIfNotExists(result.user);
+      const role = await getUserRole(result.user.uid);
+      router.push(role === "admin" ? "/dashboard/admin" : "/dashboard/user");
     } catch (err) {
       setError(friendlyError((err as AuthError).code));
     } finally {
