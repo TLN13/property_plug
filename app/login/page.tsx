@@ -90,9 +90,10 @@ export default function LoginPage() {
     clearMessages();
     setLoading(true);
     try {
-      const user = await signInWithGoogle();
-      await createUserIfNotExists(user); // Ensure Firestore document exists
-      await redirectBasedOnRole(user.uid);
+      const result = await signInWithPopup(auth, googleProvider);
+      await createUserIfNotExists(result.user);
+      const role = await getUserRole(result.user.uid);
+      router.push(role === "admin" ? "/dashboard/admin" : "/dashboard/user");
     } catch (err) {
       console.error("Firebase Google Sign-In Error:", err);
       setError(friendlyError((err as AuthError).code));

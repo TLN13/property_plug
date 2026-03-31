@@ -12,11 +12,13 @@ export default function ProtectedRoute({
   children: React.ReactNode;
   requiredRole: "admin" | "user";
 }) {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
   const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
+    if (isLoading) return;
+
     const check = async () => {
       if (!user) {
         router.push("/login");
@@ -33,9 +35,9 @@ export default function ProtectedRoute({
     };
 
     check();
-  }, [user]);
+  }, [user, isLoading, requiredRole, router]);
 
-  if (!allowed) return <p>Loading...</p>;
+  if (isLoading || !allowed) return <p>Loading...</p>;
 
   return <>{children}</>;
 }
