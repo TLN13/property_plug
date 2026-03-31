@@ -1,9 +1,15 @@
 import ProtectedRoute from "@/app/components/ProtectedRoute";
+import LogoutButton from "@/app/components/LogoutButton";
 
 export default function AdminPage() {
   return (
     <ProtectedRoute requiredRole="admin">
-      <h1>Admin Dashboard</h1>
+      <div className="space-y-6 p-6">
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-3xl font-semibold">Admin Dashboard</h1>
+          <LogoutButton />
+        </div>
+      </div>
     </ProtectedRoute>
   );
 }
