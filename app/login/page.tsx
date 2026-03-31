@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  signInWithPopup,
+  GoogleAuthProvider,
   AuthError,
 } from "firebase/auth";
 import { auth } from "@/app/firebase/firebase";
@@ -31,6 +33,7 @@ function friendlyError(code: string): string {
 
 export default function LoginPage() {
   const router = useRouter();
+  const googleProvider = new GoogleAuthProvider();
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
