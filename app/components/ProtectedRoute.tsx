@@ -37,7 +37,16 @@ export default function ProtectedRoute({
     check();
   }, [user, isLoading, requiredRole, router]);
 
-  if (isLoading || !allowed) return <p>Loading...</p>;
+  if (isLoading || !allowed) {
+    return (
+      <div
+        className="flex min-h-screen items-center justify-center px-6 text-lg font-medium"
+        style={{ backgroundColor: "#FFF8F0", color: "#4B2E2B" }}
+      >
+        Loading...
+      </div>
+    );
+  }
 
   return <>{children}</>;
 }
