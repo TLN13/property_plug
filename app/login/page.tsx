@@ -6,8 +6,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  signInWithPopup,
-  GoogleAuthProvider,
   AuthError,
 } from "firebase/auth";
 import { auth } from "@/app/firebase/firebase";
@@ -22,19 +20,28 @@ function friendlyError(code: string): string {
     "auth/user-not-found": "No account found with that email.",
     "auth/wrong-password": "Incorrect password. Try again.",
     "auth/invalid-credential": "Incorrect email or password.",
+    "auth/invalid-api-key":
+      "Firebase rejected this app's API key. Double-check your Vercel Firebase environment variables.",
     "auth/email-already-in-use": "An account with this email already exists.",
     "auth/invalid-email": "Please enter a valid email address.",
     "auth/weak-password": "Password must be at least 6 characters.",
     "auth/too-many-requests": "Too many attempts. Please try again later.",
     "auth/popup-closed-by-user": "Google sign-in was cancelled.",
+    "auth/popup-blocked":
+      "Your browser blocked the Google sign-in popup. Allow popups for this site and try again.",
     "auth/network-request-failed": "Network error. Check your connection.",
+    "auth/operation-not-allowed":
+      "Google sign-in is not enabled in Firebase Authentication for this project.",
+    "auth/unauthorized-domain":
+      "This domain is not authorized for Firebase sign-in. Add your Vercel domain in Firebase Authentication > Settings > Authorized domains.",
+    "auth/configuration-not-found":
+      "Google sign-in is not fully configured in Firebase Authentication for this project.",
   };
-  return map[code] ?? "Something went wrong. Please try again.";
+  return map[code] ?? `Something went wrong (${code}). Please try again.`;
 }
 
 export default function LoginPage() {
   const router = useRouter();
-  const googleProvider = new GoogleAuthProvider();
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -94,10 +101,9 @@ export default function LoginPage() {
     clearMessages();
     setLoading(true);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      await createUserIfNotExists(result.user);
-      const role = await getUserRole(result.user.uid);
-      router.push(role === "admin" ? "/dashboard/admin" : "/dashboard/user");
+      const user = await signInWithGoogle();
+      await createUserIfNotExists(user);
+      await redirectBasedOnRole(user.uid);
     } catch (err) {
       console.error("Firebase Google Sign-In Error:", err);
       setError(friendlyError((err as AuthError).code));
@@ -329,7 +335,7 @@ export default function LoginPage() {
           <div className="mt-4 text-center">
             {mode === "login" && (
               <p className="text-sm text-[#4B2E2B]">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <button
                   onClick={() => switchMode("signup")}
                   className="text-[#8C5A3C] underline hover:text-[#4B2E2B] active:text-[#4B2E2B]"
