@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import LogoutButton from "@/app/components/LogoutButton";
@@ -80,36 +81,41 @@ export default function UserPage() {
             </div>
 
             <div className="flex flex-col gap-6">
-              <div
-                className="rounded-3xl p-8 shadow-sm"
+              <Link
+                href="/listings"
+                className="rounded-3xl p-8 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#8C5A3C]"
                 style={{ backgroundColor: "#FFFFFF" }}
               >
                 <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">
-                  Welcome In
+                  Search
                 </p>
-                <h2 className="mt-3 text-2xl font-semibold">Your search space is ready</h2>
+                <h2 className="mt-3 text-2xl font-semibold">Your search starts here</h2>
                 <p className="mt-3 max-w-3xl text-sm text-[#4B2E2B]">
-                  This dashboard now uses the same Property Plug color system as the login
-                  screen. We can build out saved properties, inquiry history, and
-                  personalized recommendations inside this layout next.
+                  Jump into the listings page to explore available homes, compare options,
+                  and find properties that match what you are looking for.
                 </p>
-              </div>
+              </Link>
 
               <div
                 className="rounded-3xl p-8 shadow-sm"
                 style={{ backgroundColor: "#FFFFFF" }}
               >
                 <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">
-                  Map Placeholder
+                  Alberta Map
                 </p>
-                <h2 className="mt-3 text-2xl font-semibold">
-                  Google Maps section coming here
-                </h2>
-                <div className="mt-6 rounded-3xl border-2 border-dashed border-[#C08552] bg-[#FFF8F0] p-12 text-center">
-                  <p className="text-lg font-medium text-[#4B2E2B]">Future map card</p>
-                  <p className="mt-2 text-sm text-[#4B2E2B]">
-                    This space is reserved for your Google Maps feature.
-                  </p>
+                <h2 className="mt-3 text-2xl font-semibold">Explore Alberta</h2>
+                <p className="mt-3 max-w-3xl text-sm text-[#4B2E2B]">
+                  This map is centered on Alberta for now, and we can layer mock home
+                  locations onto it later.
+                </p>
+                <div className="mt-6 overflow-hidden rounded-3xl border border-[#D6B79F] bg-[#FFF8F0]">
+                  <iframe
+                    title="Map of Alberta"
+                    src="https://www.google.com/maps?q=Alberta,+Canada&z=5&output=embed"
+                    className="h-[380px] w-full border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </div>
               </div>
             </div>
