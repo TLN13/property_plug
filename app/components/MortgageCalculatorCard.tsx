@@ -162,10 +162,7 @@ export default function MortgageCalculatorCard() {
   };
 
   return (
-    <div
-      className="rounded-3xl p-8 shadow-sm"
-      style={{ backgroundColor: "#FFFFFF" }}
-    >
+    <div className="rounded-3xl bg-white p-8 shadow-sm">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">

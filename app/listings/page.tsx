@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const properties = [
@@ -169,10 +170,13 @@ export default function ListingsPage() {
               key={property.id}
               className="overflow-hidden rounded-2xl bg-white shadow-md transition hover:shadow-lg"
             >
-              <img
+              <Image
                 src={property.image}
                 alt={property.title}
+                width={1200}
+                height={800}
                 className="h-52 w-full object-cover"
+                sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
               />
 
               <div className="p-5">

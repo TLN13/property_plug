@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
@@ -86,10 +87,13 @@ export default async function PropertyDetailsPage({ params }: Props) {
           Back to Listings
         </Link>
 
-        <img
+        <Image
           src={property.image}
           alt={property.title}
+          width={1200}
+          height={800}
           className="mb-6 h-80 w-full rounded-xl object-cover"
+          sizes="(min-width: 1024px) 896px, 100vw"
         />
 
         <h1 className="mb-2 text-3xl font-bold text-[#4b2e2b]">

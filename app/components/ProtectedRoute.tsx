@@ -45,10 +45,7 @@ export default function ProtectedRoute({
 
   if (isLoading || !allowed) {
     return (
-      <div
-        className="flex min-h-screen items-center justify-center px-6 text-lg font-medium"
-        style={{ backgroundColor: "#FFF8F0", color: "#4B2E2B" }}
-      >
+      <div className="flex min-h-screen items-center justify-center bg-[#FFF8F0] px-6 text-lg font-medium text-[#4B2E2B]">
         Loading...
       </div>
     );

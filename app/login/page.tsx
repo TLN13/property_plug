@@ -134,10 +134,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen font-sans">
       {/* Left panel */}
-      <div
-        className="flex-1 flex flex-col items-center justify-center p-16 text-center"
-        style={{ backgroundColor: "#FFF8F0", color: "#5A3A36" }}
-      >
+      <div className="flex flex-1 flex-col items-center justify-center bg-[#FFF8F0] p-16 text-center text-[#5A3A36]">
         <div className="flex w-full max-w-3xl flex-col items-center">
           <Image
             src="/property-plug-logo.png"
@@ -168,14 +165,8 @@ export default function LoginPage() {
       </div>
 
       {/* Right panel */}
-      <div
-        className="flex-1 flex items-center justify-center p-12"
-        style={{ backgroundColor: "#C08552" }}
-      >
-        <div
-          className="w-full rounded-2xl p-10 shadow-lg"
-          style={{ backgroundColor: "#FFF8F0" }}
-        >
+      <div className="flex flex-1 items-center justify-center bg-[#C08552] p-12">
+        <div className="w-full rounded-2xl bg-[#FFF8F0] p-10 shadow-lg">
           <div className="mb-6">
             <h2 className="mb-1 text-xl font-bold text-[#4B2E2B]">
               {mode === "login"
