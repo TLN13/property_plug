@@ -1,14 +1,12 @@
 import Image from "next/image";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import LogoutButton from "@/app/components/LogoutButton";
+import DashboardSwitchButton from "@/app/components/DashboardSwitchButton";
 
 export default function AdminPage() {
   return (
     <ProtectedRoute requiredRole="admin">
-      <div
-        className="min-h-screen px-4 py-8 md:px-8"
-        style={{ backgroundColor: "#FFF8F0", color: "#4B2E2B" }}
-      >
+      <div className="min-h-screen bg-[#FFF8F0] px-4 py-8 text-[#4B2E2B] md:px-8">
         <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-4">
           <div className="flex justify-center">
             <Image
@@ -21,10 +19,7 @@ export default function AdminPage() {
             />
           </div>
 
-          <div
-            className="rounded-[2rem] px-8 py-10 shadow-sm"
-            style={{ backgroundColor: "#C08552" }}
-          >
+          <div className="rounded-[2rem] bg-[#C08552] px-8 py-10 shadow-sm">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="text-center md:text-left">
                 <p className="text-sm uppercase tracking-[0.24em] text-[#FFF8F0]">
@@ -37,6 +32,10 @@ export default function AdminPage() {
                   A simple place to manage listings, approvals, property quality, and
                   admin-side activity.
                 </p>
+                <DashboardSwitchButton
+                  currentDashboard="admin"
+                  className="mt-5 inline-flex items-center rounded-full bg-[#FFF8F0] px-4 py-2 text-sm font-medium text-[#8C5A3C] transition hover:bg-white hover:text-[#4B2E2B] focus:outline-none focus:ring-2 focus:ring-[#FFF8F0]"
+                />
               </div>
               <div className="flex justify-center md:justify-end">
                 <LogoutButton />
@@ -46,30 +45,21 @@ export default function AdminPage() {
 
           <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
             <div className="flex flex-col gap-6">
-              <div
-                className="rounded-3xl p-6 shadow-sm"
-                style={{ backgroundColor: "#FFFFFF" }}
-              >
+              <div className="rounded-3xl bg-white p-6 shadow-sm">
                 <p className="text-sm text-[#8C5A3C]">Listings</p>
                 <h2 className="mt-2 text-2xl font-semibold">0 Active Listings</h2>
                 <p className="mt-3 text-sm text-[#4B2E2B]">
                   Track inventory, publish status, and listing visibility from one place.
                 </p>
               </div>
-              <div
-                className="rounded-3xl p-6 shadow-sm"
-                style={{ backgroundColor: "#FFFFFF" }}
-              >
+              <div className="rounded-3xl bg-white p-6 shadow-sm">
                 <p className="text-sm text-[#8C5A3C]">Approvals</p>
                 <h2 className="mt-2 text-2xl font-semibold">0 Pending Reviews</h2>
                 <p className="mt-3 text-sm text-[#4B2E2B]">
                   Stay on top of account checks, submissions, and admin review tasks.
                 </p>
               </div>
-              <div
-                className="rounded-3xl p-6 shadow-sm"
-                style={{ backgroundColor: "#FFFFFF" }}
-              >
+              <div className="rounded-3xl bg-white p-6 shadow-sm">
                 <p className="text-sm text-[#8C5A3C]">Quality</p>
                 <h2 className="mt-2 text-2xl font-semibold">0% Verified</h2>
                 <p className="mt-3 text-sm text-[#4B2E2B]">
@@ -79,10 +69,7 @@ export default function AdminPage() {
             </div>
 
             <div className="flex flex-col gap-6">
-              <div
-                className="rounded-3xl p-8 shadow-sm"
-                style={{ backgroundColor: "#FFFFFF" }}
-              >
+              <div className="rounded-3xl bg-white p-8 shadow-sm">
                 <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">
                   Workspace
                 </p>
@@ -94,10 +81,7 @@ export default function AdminPage() {
                 </p>
               </div>
 
-              <div
-                className="rounded-3xl p-8 shadow-sm"
-                style={{ backgroundColor: "#FFFFFF" }}
-              >
+              <div className="rounded-3xl bg-white p-8 shadow-sm">
                 <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">
                   Admin Placeholder
                 </p>
