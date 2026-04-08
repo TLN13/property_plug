@@ -3,6 +3,7 @@ import Image from "next/image";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import LogoutButton from "@/app/components/LogoutButton";
 import DashboardSwitchButton from "@/app/components/DashboardSwitchButton";
+import SavedHomesSummaryCard from "@/app/components/SavedHomesSummaryCard";
 
 export default function UserPage() {
   return (
@@ -48,13 +49,7 @@ export default function UserPage() {
 
           <div className="mt-4 grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
             <div className="flex flex-col gap-6">
-              <div className="rounded-3xl bg-white p-6 shadow-sm">
-                <p className="text-sm text-[#8C5A3C]">Saved Homes</p>
-                <h2 className="mt-2 text-2xl font-semibold">0 Favorites</h2>
-                <p className="mt-3 text-sm text-[#4B2E2B]">
-                  Keep your favorite listings in one place and revisit them anytime.
-                </p>
-              </div>
+              <SavedHomesSummaryCard />
               <div className="rounded-3xl bg-white p-6 shadow-sm">
                 <p className="text-sm text-[#8C5A3C]">Tours</p>
                 <h2 className="mt-2 text-2xl font-semibold">0 Scheduled</h2>
