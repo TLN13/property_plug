@@ -150,25 +150,50 @@ const properties = [
 
 export default function ListingsPage() {
   return (
-    <main className="min-h-screen bg-[#f8f5f0] px-6 py-10">
-      <div className="mx-auto max-w-7xl">
-        <Link
-          href="/dashboard/user"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-[#8C5A3C] transition hover:text-[#4B2E2B]"
-        >
-          <span aria-hidden="true">←</span>
-          <span>Back to Dashboard</span>
-        </Link>
-        <h1 className="mb-2 text-4xl font-bold text-[#4b2e2b]">Property Listings</h1>
-        <p className="mb-8 text-[#7a5c58]">
-          Browse available homes and properties.
-        </p>
+    <main className="min-h-screen bg-[#FFF8F0] px-4 py-8 text-[#4B2E2B] md:px-8">
+      <div className="mx-auto flex w-full max-w-[1600px] flex-col">
+        <div className="flex flex-col gap-0">
+          <div className="flex justify-center">
+            <Image
+              src="/dashboard_logo.png"
+              alt="Property Plug dashboard logo"
+              width={900}
+              height={300}
+              priority
+              className="h-auto w-full max-w-[560px] object-contain"
+            />
+          </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-[2rem] bg-[#C08552] px-8 py-10 shadow-sm">
+            <div className="flex flex-col gap-4">
+              <div className="text-center md:text-left">
+                <Link
+                  href="/dashboard/user"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#FFF8F0] px-4 py-2 text-sm font-medium text-[#8C5A3C] transition hover:bg-white hover:text-[#4B2E2B] focus:outline-none focus:ring-2 focus:ring-[#FFF8F0]"
+                >
+                  <span aria-hidden="true">&larr;</span>
+                  <span>Back to Dashboard</span>
+                </Link>
+                <p className="mt-6 text-sm uppercase tracking-[0.24em] text-[#FFF8F0]">
+                  Property Plug
+                </p>
+                <h1 className="mt-2 text-3xl font-semibold text-[#FFF8F0]">
+                  Property Listings
+                </h1>
+                <p className="mt-3 max-w-2xl text-sm text-[#FFF8F0]">
+                  Browse available homes, compare neighborhoods, and explore properties
+                  that fit your search.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {properties.map((property) => (
             <div
               key={property.id}
-              className="overflow-hidden rounded-2xl bg-white shadow-md transition hover:shadow-lg"
+              className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <Image
                 src={property.image}
@@ -180,11 +205,11 @@ export default function ListingsPage() {
               />
 
               <div className="p-5">
-                <h2 className="mb-2 text-xl font-semibold text-[#4b2e2b]">
+                <h2 className="mb-2 text-xl font-semibold text-[#4B2E2B]">
                   {property.title}
                 </h2>
 
-                <p className="mb-1 text-lg font-bold text-[#a46b45]">
+                <p className="mb-1 text-lg font-bold text-[#8C5A3C]">
                   {property.price}
                 </p>
 
@@ -197,7 +222,7 @@ export default function ListingsPage() {
 
                 <Link
                   href={`/listings/${property.id}`}
-                  className="inline-block rounded-lg bg-[#a46b45] px-4 py-2 text-white transition hover:opacity-90"
+                  className="inline-block rounded-lg bg-[#8C5A3C] px-4 py-2 text-white transition hover:bg-[#4B2E2B]"
                 >
                   View Details
                 </Link>
