@@ -4,17 +4,65 @@ import { getSupabaseAdmin } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/listing-format";
 
 type SavedListingRow = {
-  listings: {
-    id: string;
-    title: string;
-    price: number;
-    location: string;
-    bedrooms: number;
-    bathrooms: number;
-    image_url: string;
-    description: string;
-  } | null;
+  listings:
+    | {
+        id: string;
+        title: string;
+        price: number;
+        location: string;
+        bedrooms: number;
+        bathrooms: number;
+        image_url: string;
+        description: string;
+      }
+    | {
+        id: string;
+        title: string;
+        price: number;
+        location: string;
+        bedrooms: number;
+        bathrooms: number;
+        image_url: string;
+        description: string;
+      }[]
+    | null;
 };
+
+type SavedListing = {
+  id: string;
+  title: string;
+  price: number;
+  location: string;
+  bedrooms: number;
+  bathrooms: number;
+  image_url: string;
+  description: string;
+};
+
+function normalizeSavedListing(listing: SavedListingRow["listings"]): SavedListing | null {
+  if (!listing) {
+    return null;
+  }
+
+  if (Array.isArray(listing)) {
+    return listing[0] ?? null;
+  }
+
+  return listing;
+}
+
+function mapListing(listing: SavedListing): Listing {
+  return {
+    id: listing.id,
+    title: listing.title,
+    price: listing.price,
+    location: listing.location,
+    bedrooms: listing.bedrooms,
+    bathrooms: listing.bathrooms,
+    image: listing.image_url,
+    description: listing.description,
+  };
+}
 
 function getConfiguredClient() {
   const supabase = getSupabaseAdmin();
@@ -26,19 +74,6 @@ function getConfiguredClient() {
   }
 
   return supabase;
-}
-
-function mapListing(listing: NonNullable<SavedListingRow["listings"]>): Listing {
-  return {
-    id: listing.id,
-    title: listing.title,
-    price: listing.price,
-    location: listing.location,
-    bedrooms: listing.bedrooms,
-    bathrooms: listing.bathrooms,
-    image: listing.image_url,
-    description: listing.description,
-  };
 }
 
 export async function ensureProfile({
@@ -151,8 +186,8 @@ export async function getSavedListingsForUser(uid: string) {
     throw new Error(`Failed to load saved listings: ${error.message}`);
   }
 
-  return (data as SavedListingRow[])
-    .map((row) => row.listings)
+  return data
+    .map((row) => normalizeSavedListing(row.listings))
     .filter((listing): listing is NonNullable<typeof listing> => Boolean(listing))
     .map(mapListing);
 }
