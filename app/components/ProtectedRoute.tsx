@@ -8,9 +8,11 @@ import { getUserRole } from "@/app/firebase/firestore";
 export default function ProtectedRoute({
   children,
   requiredRole,
+  allowAdminAccess = false,
 }: {
   children: React.ReactNode;
   requiredRole: "admin" | "user";
+  allowAdminAccess?: boolean;
 }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
@@ -27,7 +29,11 @@ export default function ProtectedRoute({
 
       const role = await getUserRole(user.uid);
 
-      if (role === requiredRole) {
+      const canAccess =
+        role === requiredRole ||
+        (allowAdminAccess && requiredRole === "user" && role === "admin");
+
+      if (canAccess) {
         setAllowed(true);
       } else {
         router.push("/login");
@@ -35,7 +41,7 @@ export default function ProtectedRoute({
     };
 
     check();
-  }, [user, isLoading, requiredRole, router]);
+  }, [user, isLoading, requiredRole, allowAdminAccess, router]);
 
   if (isLoading || !allowed) {
     return (
