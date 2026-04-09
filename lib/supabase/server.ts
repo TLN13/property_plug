@@ -2,6 +2,8 @@ import "server-only";
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
+export const LISTING_IMAGES_BUCKET = "listing-images";
+
 let supabaseAdmin: SupabaseClient | null | undefined;
 
 export function getSupabaseAdmin() {

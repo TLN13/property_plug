@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import AdminListingsHeaderActions from "@/app/components/AdminListingsHeaderActions";
 import ListingsGrid from "@/app/components/ListingsGrid";
 import { filterListings, getListings } from "@/lib/listings";
 
@@ -71,13 +72,7 @@ export default async function ListingsPage({
           <div className="rounded-[2rem] bg-[#C08552] px-8 py-10 shadow-sm">
             <div className="flex flex-col gap-4">
               <div className="text-center md:text-left">
-                <Link
-                  href="/dashboard/user"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#FFF8F0] px-4 py-2 text-sm font-medium text-[#8C5A3C] transition hover:bg-white hover:text-[#4B2E2B] focus:outline-none focus:ring-2 focus:ring-[#FFF8F0]"
-                >
-                  <span aria-hidden="true">&larr;</span>
-                  <span>Back to Dashboard</span>
-                </Link>
+                <AdminListingsHeaderActions />
                 <p className="mt-6 text-sm uppercase tracking-[0.24em] text-[#FFF8F0]">
                   Property Plug
                 </p>

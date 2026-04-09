@@ -21,6 +21,16 @@ type ListingRow = {
   description: string;
 };
 
+export type ListingInput = {
+  title: string;
+  price: number;
+  location: string;
+  bedrooms: number;
+  bathrooms: number;
+  image: string;
+  description: string;
+};
+
 function toListing(row: ListingRow): Listing {
   return {
     id: row.id,
@@ -136,4 +146,84 @@ export async function getListingById(id: string) {
   }
 
   return toListing(data as ListingRow);
+}
+
+export async function createListing(input: ListingInput) {
+  const supabase = getSupabaseAdmin();
+
+  if (!supabase) {
+    throw new Error(
+      "Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
+    );
+  }
+
+  const id = crypto.randomUUID();
+
+  const { data, error } = await supabase
+    .from("listings")
+    .insert({
+      id,
+      title: input.title,
+      price: input.price,
+      location: input.location,
+      bedrooms: input.bedrooms,
+      bathrooms: input.bathrooms,
+      image_url: input.image,
+      description: input.description,
+    })
+    .select("id, title, price, location, bedrooms, bathrooms, image_url, description")
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to create listing: ${error.message}`);
+  }
+
+  return toListing(data as ListingRow);
+}
+
+export async function updateListing(id: string, input: ListingInput) {
+  const supabase = getSupabaseAdmin();
+
+  if (!supabase) {
+    throw new Error(
+      "Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
+    );
+  }
+
+  const { data, error } = await supabase
+    .from("listings")
+    .update({
+      title: input.title,
+      price: input.price,
+      location: input.location,
+      bedrooms: input.bedrooms,
+      bathrooms: input.bathrooms,
+      image_url: input.image,
+      description: input.description,
+    })
+    .eq("id", id)
+    .select("id, title, price, location, bedrooms, bathrooms, image_url, description")
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update listing ${id}: ${error.message}`);
+  }
+
+  return toListing(data as ListingRow);
+}
+
+export async function deleteListing(id: string) {
+  const supabase = getSupabaseAdmin();
+
+  if (!supabase) {
+    throw new Error(
+      "Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
+    );
+  }
+
+  const { error } = await supabase.from("listings").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(`Failed to delete listing ${id}: ${error.message}`);
+  }
 }

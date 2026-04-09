@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import SaveListingBadge from "@/app/components/SaveListingBadge";
 import { useAuth } from "@/app/components/AuthProvider";
+import { getUserRole } from "@/app/firebase/firestore";
 import type { Listing } from "@/lib/listing-format";
 import { formatListingPrice } from "@/lib/listing-format";
 
@@ -15,6 +16,7 @@ type ListingsGridProps = {
 export default function ListingsGrid({ listings }: ListingsGridProps) {
   const { user, isLoading } = useAuth();
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (isLoading || !user) {
@@ -50,6 +52,28 @@ export default function ListingsGrid({ listings }: ListingsGridProps) {
     };
 
     void loadSavedListings();
+
+    return () => {
+      ignore = true;
+    };
+  }, [isLoading, user]);
+
+  useEffect(() => {
+    if (isLoading || !user) {
+      return;
+    }
+
+    let ignore = false;
+
+    const loadRole = async () => {
+      const role = await getUserRole(user.uid);
+
+      if (!ignore) {
+        setIsAdmin(role === "admin");
+      }
+    };
+
+    void loadRole();
 
     return () => {
       ignore = true;
@@ -108,12 +132,22 @@ export default function ListingsGrid({ listings }: ListingsGridProps) {
                 <span>{listing.bathrooms} Baths</span>
               </div>
 
-              <Link
-                href={`/listings/${listing.id}`}
-                className="inline-block rounded-lg bg-[#8C5A3C] px-4 py-2 text-white transition hover:bg-[#4B2E2B]"
-              >
-                View Details
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href={`/listings/${listing.id}`}
+                  className="inline-block rounded-lg bg-[#8C5A3C] px-4 py-2 text-white transition hover:bg-[#4B2E2B]"
+                >
+                  View Details
+                </Link>
+                {user && isAdmin ? (
+                  <Link
+                    href={`/listings/${listing.id}/edit`}
+                    className="inline-block rounded-lg border border-[#D6B79F] px-4 py-2 text-[#8C5A3C] transition hover:border-[#8C5A3C] hover:text-[#4B2E2B]"
+                  >
+                    Edit
+                  </Link>
+                ) : null}
+              </div>
             </div>
           </div>
         );
