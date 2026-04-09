@@ -1,6 +1,15 @@
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/listing-format";
 
+export type ListingFilters = {
+  query?: string;
+  location?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minBedrooms?: number;
+  minBathrooms?: number;
+};
+
 type ListingRow = {
   id: string;
   title: string;
@@ -23,6 +32,43 @@ function toListing(row: ListingRow): Listing {
     image: row.image_url,
     description: row.description,
   };
+}
+
+export function filterListings(listings: Listing[], filters: ListingFilters) {
+  const normalizedQuery = filters.query?.trim().toLowerCase();
+  const normalizedLocation = filters.location?.trim().toLowerCase();
+
+  return listings.filter((listing) => {
+    const matchesQuery =
+      !normalizedQuery ||
+      [listing.title, listing.location, listing.description].some((value) =>
+        value.toLowerCase().includes(normalizedQuery)
+      );
+
+    const matchesLocation =
+      !normalizedLocation || listing.location.toLowerCase() === normalizedLocation;
+
+    const matchesMinPrice =
+      filters.minPrice === undefined || listing.price >= filters.minPrice;
+
+    const matchesMaxPrice =
+      filters.maxPrice === undefined || listing.price <= filters.maxPrice;
+
+    const matchesBedrooms =
+      filters.minBedrooms === undefined || listing.bedrooms >= filters.minBedrooms;
+
+    const matchesBathrooms =
+      filters.minBathrooms === undefined || listing.bathrooms >= filters.minBathrooms;
+
+    return (
+      matchesQuery &&
+      matchesLocation &&
+      matchesMinPrice &&
+      matchesMaxPrice &&
+      matchesBedrooms &&
+      matchesBathrooms
+    );
+  });
 }
 
 export async function getListings() {

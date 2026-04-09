@@ -30,8 +30,8 @@ export default function AdminPage() {
                     Admin Dashboard
                   </h1>
                   <p className="mt-3 max-w-2xl text-sm text-[#FFF8F0]">
-                    A simple place to manage listings, approvals, property quality, and
-                    admin-side activity.
+                    A simple place to manage listings and keep admin-side activity in
+                    one place.
                   </p>
                   <DashboardSwitchButton
                     currentDashboard="admin"
@@ -54,49 +54,17 @@ export default function AdminPage() {
                   Track inventory, publish status, and listing visibility from one place.
                 </p>
               </div>
-              <div className="rounded-3xl bg-white p-6 shadow-sm">
-                <p className="text-sm text-[#8C5A3C]">Approvals</p>
-                <h2 className="mt-2 text-2xl font-semibold">0 Pending Reviews</h2>
-                <p className="mt-3 text-sm text-[#4B2E2B]">
-                  Stay on top of account checks, submissions, and admin review tasks.
-                </p>
-              </div>
-              <div className="rounded-3xl bg-white p-6 shadow-sm">
-                <p className="text-sm text-[#8C5A3C]">Quality</p>
-                <h2 className="mt-2 text-2xl font-semibold">0% Verified</h2>
-                <p className="mt-3 text-sm text-[#4B2E2B]">
-                  Monitor verification progress and keep the platform polished.
-                </p>
-              </div>
             </div>
 
-            <div className="flex flex-col gap-6">
-              <div className="rounded-3xl bg-white p-8 shadow-sm">
-                <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">
-                  Workspace
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold">Admin tools are ready</h2>
-                <p className="mt-3 max-w-3xl text-sm text-[#4B2E2B]">
-                  This dashboard now matches the login and user experience. We can plug
-                  your listing management, approvals, analytics, and reporting tools into
-                  this layout next.
-                </p>
-              </div>
-
-              <div className="rounded-3xl bg-white p-8 shadow-sm">
-                <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">
-                  Admin Placeholder
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold">
-                  Future management section goes here
-                </h2>
-                <div className="mt-6 rounded-3xl border-2 border-dashed border-[#C08552] bg-[#FFF8F0] p-12 text-center">
-                  <p className="text-lg font-medium text-[#4B2E2B]">Future admin card</p>
-                  <p className="mt-2 text-sm text-[#4B2E2B]">
-                    This space is reserved for management tools or analytics.
-                  </p>
-                </div>
-              </div>
+            <div className="rounded-3xl bg-white p-8 shadow-sm">
+              <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">
+                Workspace
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold">Admin tools are ready</h2>
+              <p className="mt-3 max-w-3xl text-sm text-[#4B2E2B]">
+                This dashboard now matches the rest of the product, and we can plug
+                listing management, analytics, and reporting tools into this layout next.
+              </p>
             </div>
           </div>
         </div>
