@@ -8,6 +8,7 @@ import { getUserRole } from "@/app/firebase/firestore";
 export default function Home() {
   const { user } = useAuth();
   const router = useRouter();
+
   useEffect(() => {
     const redirect = async () => {
       if (!user) {
@@ -15,16 +16,12 @@ export default function Home() {
         return;
       }
 
-      // ✅ Fetch role from Firestore
-      const role = await getUserRole(user.uid);
-
-      // ✅ Redirect based on role
-      if (role === "admin") router.push("/dashboard/admin");
-      else router.push("/dashboard/user");
+      await getUserRole(user.uid);
+      router.push("/dashboard/user");
     };
 
-    redirect();
+    void redirect();
   }, [user, router]);
 
-  return <p>Loading…</p>;
+  return <p>Loading...</p>;
 }

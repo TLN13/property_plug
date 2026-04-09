@@ -1,11 +1,77 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import LogoutButton from "@/app/components/LogoutButton";
-import DashboardSwitchButton from "@/app/components/DashboardSwitchButton";
 import SavedHomesSummaryCard from "@/app/components/SavedHomesSummaryCard";
+import { useAuth } from "@/app/components/AuthProvider";
+import { getUserRole } from "@/app/firebase/firestore";
 
 export default function UserPage() {
+  const { user, isLoading } = useAuth();
+  const [role, setRole] = useState<"admin" | "user" | null>(null);
+  const [activeListingCount, setActiveListingCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (isLoading || !user) {
+      return;
+    }
+
+    let ignore = false;
+
+    const loadRole = async () => {
+      const nextRole = (await getUserRole(user.uid)) === "admin" ? "admin" : "user";
+
+      if (!ignore) {
+        setRole(nextRole);
+      }
+
+      if (nextRole !== "admin") {
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/listings/count", { cache: "no-store" });
+        const data = (await response.json()) as {
+          count?: number;
+          error?: string;
+        };
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "Could not load active listing count.");
+        }
+
+        if (!ignore) {
+          setActiveListingCount(data.count ?? 0);
+        }
+      } catch (error) {
+        console.error("Failed to load active listing count:", error);
+
+        if (!ignore) {
+          setActiveListingCount(0);
+        }
+      }
+    };
+
+    void loadRole();
+
+    return () => {
+      ignore = true;
+    };
+  }, [isLoading, user]);
+
+  if (isLoading || !role) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#FFF8F0] px-6 text-lg font-medium text-[#4B2E2B]">
+        Loading...
+      </div>
+    );
+  }
+
+  const isAdmin = role === "admin";
+
   return (
     <ProtectedRoute requiredRole="user" allowAdminAccess>
       <div className="min-h-screen bg-[#FFF8F0] px-4 py-8 text-[#4B2E2B] md:px-8">
@@ -29,16 +95,13 @@ export default function UserPage() {
                     Property Plug
                   </p>
                   <h1 className="mt-2 text-3xl font-semibold text-[#FFF8F0]">
-                    User Dashboard
+                    {isAdmin ? "Admin Dashboard" : "User Dashboard"}
                   </h1>
                   <p className="mt-3 max-w-2xl text-sm text-[#FFF8F0]">
-                    A simple place to keep track of saved homes, tours, updates, and your
-                    future map tools.
+                    {isAdmin
+                      ? "A simple place to manage listings and keep admin activity in one place."
+                      : "A simple place to keep track of saved homes, tours, updates, and your future map tools."}
                   </p>
-                  <DashboardSwitchButton
-                    currentDashboard="user"
-                    className="mt-5 inline-flex items-center rounded-full bg-[#FFF8F0] px-4 py-2 text-sm font-medium text-[#8C5A3C] transition hover:bg-white hover:text-[#4B2E2B] focus:outline-none focus:ring-2 focus:ring-[#FFF8F0]"
-                  />
                 </div>
                 <div className="flex justify-center md:justify-end">
                   <LogoutButton />
@@ -51,20 +114,30 @@ export default function UserPage() {
             <div className="flex flex-col gap-6">
               <SavedHomesSummaryCard />
               <div className="rounded-3xl bg-white p-6 shadow-sm">
-                <p className="text-sm text-[#8C5A3C]">Tours</p>
-                <h2 className="mt-2 text-2xl font-semibold">0 Scheduled</h2>
+                <p className="text-sm text-[#8C5A3C]">
+                  {isAdmin ? "Listings" : "Tours"}
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold">
+                  {isAdmin
+                    ? `${activeListingCount ?? "..."} Active Listings`
+                    : "0 Scheduled"}
+                </h2>
                 <p className="mt-3 text-sm text-[#4B2E2B]">
-                  Manage upcoming visits, viewing requests, and follow-ups from here.
+                  {isAdmin
+                    ? "Track inventory, publish status, and listing visibility from one place."
+                    : "Manage upcoming visits, viewing requests, and follow-ups from here."}
                 </p>
               </div>
-              <div className="rounded-3xl bg-white p-6 shadow-sm">
-                <p className="text-sm text-[#8C5A3C]">Updates</p>
-                <h2 className="mt-2 text-2xl font-semibold">0 New Alerts</h2>
-                <p className="mt-3 text-sm text-[#4B2E2B]">
-                  Watch price changes, status updates, and new matches that fit your
-                  search.
-                </p>
-              </div>
+              {!isAdmin ? (
+                <div className="rounded-3xl bg-white p-6 shadow-sm">
+                  <p className="text-sm text-[#8C5A3C]">Updates</p>
+                  <h2 className="mt-2 text-2xl font-semibold">0 New Alerts</h2>
+                  <p className="mt-3 text-sm text-[#4B2E2B]">
+                    Watch price changes, status updates, and new matches that fit your
+                    search.
+                  </p>
+                </div>
+              ) : null}
 
               <Link
                 href="/dashboard/user/financial-tools"

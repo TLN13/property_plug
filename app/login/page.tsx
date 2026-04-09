@@ -63,9 +63,8 @@ export default function LoginPage() {
   };
 
   const redirectBasedOnRole = async (uid: string) => {
-    const role = await getUserRole(uid);
-    if (role === "admin") router.push("/dashboard/admin");
-    else router.push("/dashboard/user");
+    await getUserRole(uid);
+    router.push("/dashboard/user");
   };
 
   const handleEmailAuth = async (e: React.FormEvent) => {

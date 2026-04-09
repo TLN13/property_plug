@@ -3,7 +3,6 @@ import Image from "next/image";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import LogoutButton from "@/app/components/LogoutButton";
 import MortgageCalculatorCard from "@/app/components/MortgageCalculatorCard";
-import DashboardSwitchButton from "@/app/components/DashboardSwitchButton";
 
 export default function FinancialToolsPage() {
   return (
@@ -42,10 +41,6 @@ export default function FinancialToolsPage() {
                     Review carrying costs, test down payments, and estimate monthly
                     mortgage payments without leaving your dashboard flow.
                   </p>
-                  <DashboardSwitchButton
-                    currentDashboard="user"
-                    className="mt-5 inline-flex items-center rounded-full bg-[#FFF8F0] px-4 py-2 text-sm font-medium text-[#8C5A3C] transition hover:bg-white hover:text-[#4B2E2B] focus:outline-none focus:ring-2 focus:ring-[#FFF8F0]"
-                  />
                 </div>
                 <div className="flex justify-center md:justify-end">
                   <LogoutButton />
