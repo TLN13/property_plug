@@ -5,16 +5,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/components/AuthProvider";
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    } else {
-      router.push("/dashboard/user");
-    }
-  }, [user]);
+    if (isLoading) return;
+    router.push(user ? "/dashboard" : "/login");
+  }, [isLoading, user, router]);
 
   return <p>Loading...</p>;
 }

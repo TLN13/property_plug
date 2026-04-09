@@ -2,8 +2,7 @@
 
 import { useAuth } from "./AuthProvider";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getUserRole } from "@/app/firebase/firestore";
+import { useEffect } from "react";
 
 export default function ProtectedRoute({
   children,
@@ -12,32 +11,24 @@ export default function ProtectedRoute({
   children: React.ReactNode;
   requiredRole: "admin" | "user";
 }) {
-  const { user, isLoading } = useAuth();
+  const { user, role, isLoading } = useAuth();
   const router = useRouter();
-  const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
     if (isLoading) return;
 
-    const check = async () => {
-      if (!user) {
-        router.push("/login");
-        return;
-      }
+    if (!user || role !== requiredRole) {
+      router.push("/login");
+    }
+  }, [user, role, isLoading, requiredRole, router]);
 
-      const role = await getUserRole(user.uid);
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-      if (role === requiredRole) {
-        setAllowed(true);
-      } else {
-        router.push("/login");
-      }
-    };
-
-    check();
-  }, [user, isLoading, requiredRole, router]);
-
-  if (isLoading || !allowed) return <p>Loading...</p>;
+  if (!user || role !== requiredRole) {
+    return <p>Redirecting...</p>;
+  }
 
   return <>{children}</>;
 }
