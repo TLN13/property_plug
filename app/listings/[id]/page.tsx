@@ -5,6 +5,8 @@ import SaveListingButton from "@/app/components/SaveListingButton";
 import { formatListingPrice } from "@/lib/listing-format";
 import { getListingById } from "@/lib/listings";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{
     id: string;

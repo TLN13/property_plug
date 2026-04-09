@@ -3,6 +3,8 @@ import Image from "next/image";
 import ListingsGrid from "@/app/components/ListingsGrid";
 import { getListings } from "@/lib/listings";
 
+export const dynamic = "force-dynamic";
+
 export default async function ListingsPage() {
   const properties = await getListings();
 
