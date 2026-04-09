@@ -92,6 +92,26 @@ export async function getListings() {
   return data.map((row) => toListing(row as ListingRow));
 }
 
+export async function getActiveListingCount() {
+  const supabase = getSupabaseAdmin();
+
+  if (!supabase) {
+    throw new Error(
+      "Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
+    );
+  }
+
+  const { count, error } = await supabase
+    .from("listings")
+    .select("*", { count: "exact", head: true });
+
+  if (error) {
+    throw new Error(`Failed to load listings count from Supabase: ${error.message}`);
+  }
+
+  return count ?? 0;
+}
+
 export async function getListingById(id: string) {
   const supabase = getSupabaseAdmin();
 

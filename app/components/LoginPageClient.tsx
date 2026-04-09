@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -14,6 +14,10 @@ import { signInWithGoogle } from "@/app/firebase/auth";
 import { createUserIfNotExists, getUserRole } from "@/app/firebase/firestore";
 
 type Mode = "login" | "signup" | "reset";
+
+type LoginPageClientProps = {
+  activeListingCount: number;
+};
 
 function friendlyError(code: string): string {
   const map: Record<string, string> = {
@@ -40,9 +44,10 @@ function friendlyError(code: string): string {
   return map[code] ?? `Something went wrong (${code}). Please try again.`;
 }
 
-export default function LoginPage() {
+export default function LoginPageClient({
+  activeListingCount,
+}: LoginPageClientProps) {
   const router = useRouter();
-  const [activeListingCount, setActiveListingCount] = useState<number | null>(null);
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,11 +89,9 @@ export default function LoginPage() {
         userCredential = await signInWithEmailAndPassword(auth, email, password);
       } else {
         userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        // Create user in Firestore if it doesn't exist
         await createUserIfNotExists(userCredential.user);
       }
 
-      // ✅ Redirect based on role
       await redirectBasedOnRole(userCredential.user.uid);
     } catch (err) {
       console.error("Auth error:", err);
@@ -132,43 +135,8 @@ export default function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    let ignore = false;
-
-    const loadActiveListingCount = async () => {
-      try {
-        const response = await fetch("/api/listings/count", { cache: "no-store" });
-        const data = (await response.json()) as {
-          count?: number;
-          error?: string;
-        };
-
-        if (!response.ok) {
-          throw new Error(data.error ?? "Could not load active listing count.");
-        }
-
-        if (!ignore) {
-          setActiveListingCount(data.count ?? 0);
-        }
-      } catch (error) {
-        console.error("Failed to load active listing count:", error);
-
-        if (!ignore) {
-          setActiveListingCount(0);
-        }
-      }
-    };
-
-    void loadActiveListingCount();
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
   return (
     <div className="flex min-h-screen font-sans">
-      {/* Left panel */}
       <div className="flex flex-1 flex-col items-center justify-center bg-[#FFF8F0] p-16 text-center text-[#5A3A36]">
         <div className="flex w-full max-w-3xl flex-col items-center">
           <Image
@@ -184,9 +152,7 @@ export default function LoginPage() {
           </p>
           <div className="flex gap-6">
             <div>
-              <div className="text-2xl font-bold">
-                {activeListingCount === null ? "..." : activeListingCount}
-              </div>
+              <div className="text-2xl font-bold">{activeListingCount}+</div>
               <div className="mt-1 text-sm text-[#4B2E2B]">Active listings</div>
             </div>
             <div>
@@ -201,7 +167,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right panel */}
       <div className="flex flex-1 items-center justify-center bg-[#C08552] p-12">
         <div className="w-full rounded-2xl bg-[#FFF8F0] p-10 shadow-lg">
           <div className="mb-6">
@@ -209,25 +174,25 @@ export default function LoginPage() {
               {mode === "login"
                 ? "Welcome back"
                 : mode === "signup"
-                ? "Create account"
-                : "Reset password"}
+                  ? "Create account"
+                  : "Reset password"}
             </h2>
             <p className="text-sm text-[#4B2E2B]">
               {mode === "login"
                 ? "Sign in to access your dashboard."
                 : mode === "signup"
-                ? "Join to start your property search."
-                : "We'll send a reset link to your email."}
+                  ? "Join to start your property search."
+                  : "We'll send a reset link to your email."}
             </p>
           </div>
 
           {error && (
-            <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded">
+            <div className="mb-4 rounded bg-red-100 p-3 text-sm text-red-700">
               {error}
             </div>
           )}
           {info && (
-            <div className="p-3 mb-4 text-sm text-green-700 bg-green-100 rounded">
+            <div className="mb-4 rounded bg-green-100 p-3 text-sm text-green-700">
               {info}
             </div>
           )}
@@ -353,10 +318,10 @@ export default function LoginPage() {
               {loading
                 ? "Please wait…"
                 : mode === "login"
-                ? "Sign in"
-                : mode === "signup"
-                ? "Create account"
-                : "Send reset link"}
+                  ? "Sign in"
+                  : mode === "signup"
+                    ? "Create account"
+                    : "Send reset link"}
             </button>
           </form>
 

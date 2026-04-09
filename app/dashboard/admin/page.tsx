@@ -2,8 +2,11 @@ import Image from "next/image";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import LogoutButton from "@/app/components/LogoutButton";
 import DashboardSwitchButton from "@/app/components/DashboardSwitchButton";
+import { getActiveListingCount } from "@/lib/listings";
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const activeListingCount = await getActiveListingCount();
+
   return (
     <ProtectedRoute requiredRole="admin">
       <div className="min-h-screen bg-[#FFF8F0] px-4 py-8 text-[#4B2E2B] md:px-8">
@@ -49,7 +52,9 @@ export default function AdminPage() {
             <div className="flex flex-col gap-6">
               <div className="rounded-3xl bg-white p-6 shadow-sm">
                 <p className="text-sm text-[#8C5A3C]">Listings</p>
-                <h2 className="mt-2 text-2xl font-semibold">0 Active Listings</h2>
+                <h2 className="mt-2 text-2xl font-semibold">
+                  {activeListingCount} Active Listings
+                </h2>
                 <p className="mt-3 text-sm text-[#4B2E2B]">
                   Track inventory, publish status, and listing visibility from one place.
                 </p>
