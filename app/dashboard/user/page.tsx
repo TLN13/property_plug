@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -8,12 +9,19 @@ import LogoutButton from "@/app/components/LogoutButton";
 import SavedHomesSummaryCard from "@/app/components/SavedHomesSummaryCard";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getScheduledToursForUser, getUserRole } from "@/app/firebase/firestore";
+import type { Listing } from "@/lib/listing-format";
+import { groupListingsByCity, type ListingCityGroup } from "@/lib/listing-map";
+
+const ListingsCityMap = dynamic(() => import("@/app/components/ListingsCityMap"), {
+  ssr: false,
+});
 
 export default function UserPage() {
   const { user, isLoading } = useAuth();
   const [role, setRole] = useState<"admin" | "user" | null>(null);
   const [activeListingCount, setActiveListingCount] = useState<number | null>(null);
   const [scheduledTourCount, setScheduledTourCount] = useState<number | null>(null);
+  const [cityGroups, setCityGroups] = useState<ListingCityGroup[]>([]);
 
   useEffect(() => {
     if (isLoading || !user) {
@@ -76,6 +84,40 @@ export default function UserPage() {
       ignore = true;
     };
   }, [isLoading, user]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const loadListingsForMap = async () => {
+      try {
+        const response = await fetch("/api/listings", { cache: "no-store" });
+        const data = (await response.json()) as {
+          error?: string;
+          listings?: Listing[];
+        };
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "Could not load listings for the map.");
+        }
+
+        if (!ignore) {
+          setCityGroups(groupListingsByCity(data.listings ?? []));
+        }
+      } catch (error) {
+        console.error("Failed to load listings for map:", error);
+
+        if (!ignore) {
+          setCityGroups([]);
+        }
+      }
+    };
+
+    void loadListingsForMap();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   if (isLoading || !role) {
     return (
@@ -185,19 +227,20 @@ export default function UserPage() {
                 <p className="text-sm uppercase tracking-[0.2em] text-[#8C5A3C]">
                   Alberta Map
                 </p>
-                <h2 className="mt-3 text-2xl font-semibold">Explore Alberta</h2>
+                <h2 className="mt-3 text-2xl font-semibold">Browse Homes by City</h2>
                 <p className="mt-3 max-w-3xl text-sm text-[#4B2E2B]">
-                  View the province at a glance and use it as a starting point while you
-                  compare communities, cities, and available homes.
+                  Each marker shows how many listings are available in that city. Open a
+                  marker to jump straight to a property details page.
                 </p>
-                <div className="mt-6 overflow-hidden rounded-3xl border border-[#D6B79F] bg-[#FFF8F0]">
-                  <iframe
-                    title="Map of Alberta"
-                    src="https://www.google.com/maps?q=Alberta,+Canada&z=5&output=embed"
-                    className="h-[380px] w-full border-0"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
+                <div className="mt-6">
+                  {cityGroups.length > 0 ? (
+                    <ListingsCityMap cityGroups={cityGroups} />
+                  ) : (
+                    <div className="flex h-[380px] items-center justify-center rounded-3xl border border-[#D6B79F] bg-[#FFF8F0] px-6 text-center text-sm text-[#4B2E2B]">
+                      Add listings with Alberta city names in the location field to see
+                      them appear on the map.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

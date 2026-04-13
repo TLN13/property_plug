@@ -24,3 +24,34 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.listing-city-marker {
+  align-items: center;
+  background: transparent;
+  border: 0 !important;
+  box-shadow: none !important;
+  display: flex;
+  height: 42px;
+  justify-content: center;
+  margin: 0 !important;
+  width: 42px;
+}
+
+.listing-city-marker__bubble {
+  align-items: center;
+  background: #8c5a3c;
+  border: 3px solid #fff8f0;
+  border-radius: 9999px;
+  box-shadow: 0 10px 20px rgb(75 46 43 / 0.18);
+  color: #fff8f0;
+  display: flex;
+  font-size: 0.95rem;
+  font-weight: 700;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.listing-city-marker__bubble span {
+  line-height: 1;
+}
