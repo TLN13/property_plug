@@ -23,5 +23,5 @@ export default function Home() {
     void redirect();
   }, [user, router]);
 
-  return <p>Loading...</p>;
+  return <p>Opening your dashboard...</p>;
 }

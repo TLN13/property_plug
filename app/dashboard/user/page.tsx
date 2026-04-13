@@ -7,12 +7,13 @@ import ProtectedRoute from "@/app/components/ProtectedRoute";
 import LogoutButton from "@/app/components/LogoutButton";
 import SavedHomesSummaryCard from "@/app/components/SavedHomesSummaryCard";
 import { useAuth } from "@/app/components/AuthProvider";
-import { getUserRole } from "@/app/firebase/firestore";
+import { getScheduledToursForUser, getUserRole } from "@/app/firebase/firestore";
 
 export default function UserPage() {
   const { user, isLoading } = useAuth();
   const [role, setRole] = useState<"admin" | "user" | null>(null);
   const [activeListingCount, setActiveListingCount] = useState<number | null>(null);
+  const [scheduledTourCount, setScheduledTourCount] = useState<number | null>(null);
 
   useEffect(() => {
     if (isLoading || !user) {
@@ -29,6 +30,20 @@ export default function UserPage() {
       }
 
       if (nextRole !== "admin") {
+        try {
+          const tours = await getScheduledToursForUser(user.uid);
+
+          if (!ignore) {
+            setScheduledTourCount(tours.length);
+          }
+        } catch (error) {
+          console.error("Failed to load scheduled tours:", error);
+
+          if (!ignore) {
+            setScheduledTourCount(0);
+          }
+        }
+
         return;
       }
 
@@ -99,8 +114,8 @@ export default function UserPage() {
                   </h1>
                   <p className="mt-3 max-w-2xl text-sm text-[#FFF8F0]">
                     {isAdmin
-                      ? "A simple place to manage listings and keep admin activity in one place."
-                      : "A simple place to keep track of saved homes, tours, updates, and your future map tools."}
+                      ? "Manage active listings, monitor inventory, and keep day-to-day admin work organized in one place."
+                      : "Track saved homes, manage scheduled tours, and explore listings across Alberta from one dashboard."}
                   </p>
                 </div>
                 <div className="flex justify-center md:justify-end">
@@ -113,32 +128,31 @@ export default function UserPage() {
           <div className="mt-4 grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)]">
             <div className="flex flex-col gap-6">
               <SavedHomesSummaryCard />
-              <div className="rounded-3xl bg-white p-6 shadow-sm">
-                <p className="text-sm text-[#8C5A3C]">
-                  {isAdmin ? "Listings" : "Tours"}
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold">
-                  {isAdmin
-                    ? `${activeListingCount ?? "..."} Active Listings`
-                    : "0 Scheduled"}
-                </h2>
-                <p className="mt-3 text-sm text-[#4B2E2B]">
-                  {isAdmin
-                    ? "Track inventory, publish status, and listing visibility from one place."
-                    : "Manage upcoming visits, viewing requests, and follow-ups from here."}
-                </p>
-              </div>
-              {!isAdmin ? (
+              {isAdmin ? (
                 <div className="rounded-3xl bg-white p-6 shadow-sm">
-                  <p className="text-sm text-[#8C5A3C]">Updates</p>
-                  <h2 className="mt-2 text-2xl font-semibold">0 New Alerts</h2>
+                  <p className="text-sm text-[#8C5A3C]">Listings</p>
+                  <h2 className="mt-2 text-2xl font-semibold">
+                    {activeListingCount ?? "..."} Active Listings
+                  </h2>
                   <p className="mt-3 text-sm text-[#4B2E2B]">
-                    Watch price changes, status updates, and new matches that fit your
-                    search.
+                    Track inventory, publish status, and listing visibility from one place.
                   </p>
                 </div>
-              ) : null}
-
+              ) : (
+                <Link
+                  href="/dashboard/user/tours-scheduled"
+                  className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#8C5A3C]"
+                >
+                  <p className="text-sm text-[#8C5A3C]">Tours</p>
+                  <h2 className="mt-2 text-2xl font-semibold">
+                    {scheduledTourCount ?? "..."} Scheduled
+                  </h2>
+                  <p className="mt-3 text-sm text-[#4B2E2B]">
+                    Open your calendar, manage upcoming visits, and jump back into the
+                    listing details.
+                  </p>
+                </Link>
+              )}
               <Link
                 href="/dashboard/user/financial-tools"
                 className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#8C5A3C]"
@@ -162,8 +176,8 @@ export default function UserPage() {
                 </p>
                 <h2 className="mt-3 text-2xl font-semibold">Your search starts here</h2>
                 <p className="mt-3 max-w-3xl text-sm text-[#4B2E2B]">
-                  Jump into the listings page to explore available homes, compare options,
-                  and find properties that match what you are looking for.
+                  Browse current listings, compare neighborhoods, and narrow in on homes
+                  that match your budget, layout, and location goals.
                 </p>
               </Link>
 
@@ -173,8 +187,8 @@ export default function UserPage() {
                 </p>
                 <h2 className="mt-3 text-2xl font-semibold">Explore Alberta</h2>
                 <p className="mt-3 max-w-3xl text-sm text-[#4B2E2B]">
-                  This map is centered on Alberta for now, and we can layer mock home
-                  locations onto it later.
+                  View the province at a glance and use it as a starting point while you
+                  compare communities, cities, and available homes.
                 </p>
                 <div className="mt-6 overflow-hidden rounded-3xl border border-[#D6B79F] bg-[#FFF8F0]">
                   <iframe

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ScheduleTourCard from "@/app/components/ScheduleTourCard";
 import SaveListingButton from "@/app/components/SaveListingButton";
 import { formatListingPrice } from "@/lib/listing-format";
 import { getListingById } from "@/lib/listings";
@@ -56,6 +57,13 @@ export default async function PropertyDetailsPage({ params }: Props) {
         </div>
 
         <SaveListingButton listingId={property.id} />
+        <ScheduleTourCard
+          listingId={property.id}
+          listingImage={property.image}
+          listingLocation={property.location}
+          listingPrice={property.price}
+          listingTitle={property.title}
+        />
 
         <p className="leading-7 text-gray-700">{property.description}</p>
       </div>

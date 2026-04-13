@@ -57,12 +57,12 @@ export default function SavedHomesSummaryCard() {
     >
       <p className="text-sm text-[#8C5A3C]">Saved Homes</p>
       <h2 className="mt-2 text-2xl font-semibold">
-        {isLoading ? "Loading..." : `${count} Favorite${count === 1 ? "" : "s"}`}
+        {isLoading ? "Loading saved homes..." : `${count} Favorite${count === 1 ? "" : "s"}`}
       </h2>
       <p className="mt-3 text-sm text-[#4B2E2B]">
         {error
-          ? "We could not load your saved homes right now, but you can still open them here."
-          : "Keep your favorite listings in one place and revisit them anytime."}
+          ? "Your saved homes are temporarily unavailable, but you can still open the saved listings page."
+          : "Keep the homes you love in one place and return to them whenever you are ready to compare."}
       </p>
     </Link>
   );

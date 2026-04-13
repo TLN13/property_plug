@@ -66,7 +66,7 @@ export default function SavedListingsView() {
   if (isLoading || isFetching) {
     return (
       <div className="mt-4 rounded-3xl bg-white p-10 text-center shadow-sm">
-        <h2 className="text-2xl font-semibold text-[#4B2E2B]">Loading saved listings...</h2>
+        <h2 className="text-2xl font-semibold text-[#4B2E2B]">Loading your saved homes...</h2>
       </div>
     );
   }
@@ -75,7 +75,7 @@ export default function SavedListingsView() {
     return (
       <div className="mt-4 rounded-3xl bg-white p-10 text-center shadow-sm">
         <h2 className="text-2xl font-semibold text-[#4B2E2B]">
-          We could not load your saved listings
+          We could not load your saved homes
         </h2>
         <p className="mt-3 text-sm text-red-700">{error}</p>
       </div>
@@ -85,16 +85,16 @@ export default function SavedListingsView() {
   if (listings.length === 0) {
     return (
       <div className="mt-4 rounded-3xl bg-white p-10 text-center shadow-sm">
-        <h2 className="text-2xl font-semibold text-[#4B2E2B]">No saved listings yet</h2>
+        <h2 className="text-2xl font-semibold text-[#4B2E2B]">No saved homes yet</h2>
         <p className="mt-3 max-w-2xl text-sm text-[#4B2E2B]">
-          Tap the heart on any listing detail page and it will show up here the next time
-          you come back.
+          Save any property that stands out to you, and it will show up here for quick
+          access later.
         </p>
         <Link
           href="/listings"
           className="mt-6 inline-flex rounded-full bg-[#8C5A3C] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#4B2E2B]"
         >
-          Browse listings
+          Explore listings
         </Link>
       </div>
     );

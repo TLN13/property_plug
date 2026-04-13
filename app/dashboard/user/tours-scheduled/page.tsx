@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import SavedListingsView from "@/app/components/SavedListingsView";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
+import ScheduledToursView from "@/app/components/ScheduledToursView";
 
-export default function SavedListingsPage() {
+export default function ToursScheduledPage() {
   return (
     <ProtectedRoute requiredRole="user" allowAdminAccess>
       <main className="min-h-screen bg-[#FFF8F0] px-4 py-8 text-[#4B2E2B] md:px-8">
@@ -34,18 +34,18 @@ export default function SavedListingsPage() {
                     Property Plug
                   </p>
                   <h1 className="mt-2 text-3xl font-semibold text-[#FFF8F0]">
-                    Saved Listings
+                    Tours Scheduled
                   </h1>
                   <p className="mt-3 max-w-2xl text-sm text-[#FFF8F0]">
-                    Revisit the properties you saved, compare details, and jump back into
-                    any listing when you want another look.
+                    Keep every property visit in one place with a calendar view and quick
+                    links back to the listing details.
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <SavedListingsView />
+          <ScheduledToursView />
         </div>
       </main>
     </ProtectedRoute>
