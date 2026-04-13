@@ -29,7 +29,7 @@ export type ScheduleTourInput = Omit<ScheduledTour, "id">;
 function isFirestorePermissionError(error: unknown) {
   return (
     error instanceof FirestoreError &&
-    (error.code === "permission-denied" || error.code === "insufficient-permission")
+    error.code === "permission-denied"
   );
 }
 
